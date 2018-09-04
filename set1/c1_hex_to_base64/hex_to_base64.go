@@ -142,10 +142,6 @@ func bIndex(b byte) int {
 	return bytes.IndexByte(base64Std, b)
 }
 
-func hIndex(b byte) int {
-	return bytes.IndexByte(hextable, b)
-}
-
 func EncodeHex(src []byte) []byte {
 	dst := make([]byte, len(src)*2)
 	for i, v := range src {

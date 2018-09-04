@@ -81,3 +81,23 @@ func TestDecodeBase64Pad2(t *testing.T) {
 		t.Errorf("Incorrect encoding. Expected: %s, got: %s\n", exp, res)
 	}
 }
+
+func TestDecodeHex(t *testing.T) {
+	inp := []byte("6162596c736b2064313233313220396a6b617320333461626364313233313233")
+	exp := "abYlsk d12312 9jkas 34abcd123123"
+	res, _ := DecodeHex(inp)
+
+	if string(res) != exp {
+		t.Errorf("Incorrect encoding. Expected: %s, got: %s\n", exp, res)
+	}
+}
+
+func TestEncodeHex(t *testing.T) {
+	inp := []byte("abYlsk d12312 9jkas 34abcd123123")
+	exp := "6162596c736b2064313233313220396a6b617320333461626364313233313233"
+	res := EncodeHex(inp)
+
+	if string(res) != exp {
+		t.Errorf("Incorrect encoding. Expected: %s, got: %s\n", exp, res)
+	}
+}
