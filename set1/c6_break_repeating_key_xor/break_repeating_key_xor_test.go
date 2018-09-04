@@ -21,8 +21,6 @@ func TestBreakKeyXOR(t *testing.T) {
 	enc, _ := c1_hex_to_base64.DecodeBase64(file)
 	keySize, _ := KeySizeDetect(enc)
 	key := BreakKeyXOR(enc, keySize)
-	// dec := c5_repeating_key_xor.XORByKey(enc, key)
-	// fmt.Printf("%q\n", string(dec))
 
 	if string(key) != exp {
 		t.Errorf("Incorrect result. Expected: %s, got: %s\n", exp, key)
