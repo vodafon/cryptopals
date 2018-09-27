@@ -2,6 +2,7 @@ package c11_ecb_cbc_detection
 
 import (
 	"bytes"
+	"errors"
 	"math/rand"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 )
 
 func EncryptionOracle(src []byte) ([]byte, string) {
+	rand.Seed(time.Now().UnixNano())
 	var buf bytes.Buffer
 	prefix := make([]byte, randomInt(5, 10))
 	rand.Read(prefix)
@@ -31,6 +33,16 @@ func EncryptionOracle(src []byte) ([]byte, string) {
 	} else {
 		return c7_aes_ecb.DecryptAes128Ecb(buf.Bytes(), key), "ECB"
 	}
+}
+
+func IsECB(enc []byte, pos, blockSize int) (bool, error) {
+	if len(enc) < blockSize*2+pos {
+		return false, errors.New("short encrypted text")
+	}
+	if bytes.Equal(enc[pos:pos+blockSize], enc[pos+blockSize:pos+blockSize*2]) {
+		return true, nil
+	}
+	return false, nil
 }
 
 func randomInt(min, max int) int {

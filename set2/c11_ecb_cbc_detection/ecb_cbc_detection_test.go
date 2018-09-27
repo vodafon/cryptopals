@@ -12,7 +12,12 @@ func TestEncriptionOracle(t *testing.T) {
 
 	for cbcCount < 50 {
 		res, algo := EncryptionOracle(src)
-		if bytes.Equal(res[16:32], res[32:48]) {
+		isEcb, err := IsECB(res, 16, 16)
+		if err != nil {
+			t.Error(err.Error())
+		}
+
+		if isEcb {
 			if algo != "ECB" {
 				t.Errorf("Incorrect CBC/ECB detection: %q %s", res, algo)
 			}
