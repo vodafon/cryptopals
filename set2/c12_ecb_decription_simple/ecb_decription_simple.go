@@ -27,7 +27,7 @@ func (e Encryptor) Encrypt(src []byte) []byte {
 	buf.Write(src)
 	buf.Write(e.tail)
 
-	return c7_aes_ecb.DecryptAes128Ecb(buf.Bytes(), e.key)
+	return c7_aes_ecb.Encrypt(buf.Bytes(), e.key)
 }
 
 func (e Encryptor) BruteForce(blockSize int) []byte {

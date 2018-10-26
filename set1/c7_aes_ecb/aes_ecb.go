@@ -6,15 +6,26 @@ import (
 	"github.com/vodafon/cryptopals/set2/c9_pkcs7_padding"
 )
 
-func DecryptAes128Ecb(src, key []byte) []byte {
-	cipher, _ := aes.NewCipher([]byte(key))
-	size := 16
-	data := c9_pkcs7_padding.Padding(src, size)
-	decrypted := make([]byte, len(data))
+type CryptFunc func([]byte, []byte)
+
+func Decrypt(src, key []byte) []byte {
+	block, _ := aes.NewCipher([]byte(key))
+	data := crypt(src, key, block.BlockSize(), block.Decrypt)
+	return c9_pkcs7_padding.UnPadding(data, block.BlockSize())
+}
+
+func Encrypt(src, key []byte) []byte {
+	block, _ := aes.NewCipher([]byte(key))
+	data := c9_pkcs7_padding.Padding(src, block.BlockSize())
+	return crypt(data, key, block.BlockSize(), block.Encrypt)
+}
+
+func crypt(data, key []byte, size int, cipherFunc CryptFunc) []byte {
+	dst := make([]byte, len(data))
 
 	for bs, be := 0, size; bs < len(data); bs, be = bs+size, be+size {
-		cipher.Decrypt(decrypted[bs:be], data[bs:be])
+		cipherFunc(dst[bs:be], data[bs:be])
 	}
 
-	return decrypted
+	return dst
 }
