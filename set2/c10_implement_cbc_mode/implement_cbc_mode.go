@@ -12,11 +12,11 @@ func CBCMode(src, key, iv []byte) []byte {
 	start := len(ciphertext) - len(key)
 	prev := start - len(key)
 
-	prevBlock := c7_aes_ecb.DecryptAes128Ecb(ciphertext[start:len(ciphertext)], key)
+	prevBlock := c7_aes_ecb.Decrypt(ciphertext[start:len(ciphertext)], key)
 	for start > 0 {
 		currentBlock := ciphertext[prev:start]
 		plaintext = append(c2_fixed_xor.SafeXORBytes(prevBlock, currentBlock), plaintext...)
-		prevBlock = c7_aes_ecb.DecryptAes128Ecb(currentBlock, key)
+		prevBlock = c7_aes_ecb.Decrypt(currentBlock, key)
 		start -= len(key)
 		prev -= len(key)
 	}

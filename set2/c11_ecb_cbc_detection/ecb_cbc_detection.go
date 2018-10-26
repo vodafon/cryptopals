@@ -31,7 +31,7 @@ func EncryptionOracle(src []byte) ([]byte, string) {
 
 		return c10_implement_cbc_mode.CBCMode(buf.Bytes(), key, iv), "CBC"
 	} else {
-		return c7_aes_ecb.DecryptAes128Ecb(buf.Bytes(), key), "ECB"
+		return c7_aes_ecb.Encrypt(buf.Bytes(), key), "ECB"
 	}
 }
 
