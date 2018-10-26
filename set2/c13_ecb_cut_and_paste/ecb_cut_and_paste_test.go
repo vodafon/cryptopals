@@ -42,7 +42,6 @@ func TestAttackProfile(t *testing.T) {
 	key := make([]byte, 16)
 	rand.Seed(time.Now().UnixNano())
 	rand.Read(key)
-	key = []byte("AAAABBBBCCCCDDDD")
 
 	padding := 11
 	// user@emai.admin\v\v\v\v\v\v\v\v\v\v\vcom
