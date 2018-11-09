@@ -1,4 +1,4 @@
-package c12_ecb_decription_simple
+package c14_ecb_decription_harder
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/vodafon/cryptopals/set1/c1_hex_to_base64"
-	"github.com/vodafon/cryptopals/set2/c11_ecb_cbc_detection"
+	"github.com/vodafon/cryptopals/set2/c12_ecb_decription_simple"
 )
 
 func TestEncryptECBTail(t *testing.T) {
@@ -22,24 +22,27 @@ func TestEncryptECBTail(t *testing.T) {
 	}
 
 	key := make([]byte, 16)
+	prefix := make([]byte, rand.Intn(50)+2)
 	rand.Seed(time.Now().UnixNano())
 	rand.Read(key)
+	rand.Read(prefix)
 
-	e := NewEnc(key, tail)
+	e := NewEnc(key, prefix, tail)
 
-	bs, err := BlockSizeDetect(e, 100)
+	bs, err := c12_ecb_decription_simple.BlockSizeDetect(e, 100)
 	if err != nil {
 		t.Error(err.Error())
 	}
 
-	src := bytes.Repeat([]byte("A"), bs*3)
-	res := e.Encrypt(src)
-	isEcb, err := c11_ecb_cbc_detection.IsECB(res, 0, bs)
-	if !isEcb {
-		t.Errorf("is not ECB encryption")
+	ps, err := prefixSize(e, bs)
+	if err != nil {
+		t.Error(err)
+	}
+	if ps != len(prefix) {
+		t.Errorf("Invalid prefix size. Expected: %d, got: %d\n", len(prefix), ps)
 	}
 
-	decr := e.BruteForce(bs)
+	decr := e.BruteForce(bs, ps)
 	if !bytes.Contains(decr, []byte("rag-top down so my hair can blow\nThe girlies on standby waving just to say")) {
 		t.Errorf("Invalid decryption")
 	}
