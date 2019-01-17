@@ -3,11 +3,11 @@ package c10_implement_cbc_mode
 import (
 	"github.com/vodafon/cryptopals/set1/c2_fixed_xor"
 	"github.com/vodafon/cryptopals/set1/c7_aes_ecb"
-	"github.com/vodafon/cryptopals/set2/c9_pkcs7_padding"
+	"github.com/vodafon/cryptopals/set2/c09_pkcs7_padding"
 )
 
 func CBCMode(src, key, iv []byte) []byte {
-	ciphertext := c9_pkcs7_padding.Padding(src, len(key))
+	ciphertext := c09_pkcs7_padding.Padding(src, len(key))
 	plaintext := []byte{}
 	start := len(ciphertext) - len(key)
 	prev := start - len(key)
