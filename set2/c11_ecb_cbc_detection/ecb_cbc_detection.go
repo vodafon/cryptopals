@@ -29,7 +29,7 @@ func EncryptionOracle(src []byte) ([]byte, string) {
 		iv := make([]byte, 16)
 		rand.Read(iv)
 
-		return c10_implement_cbc_mode.CBCMode(buf.Bytes(), key, iv), "CBC"
+		return c10_implement_cbc_mode.Encrypt(buf.Bytes(), key, iv), "CBC"
 	} else {
 		return c7_aes_ecb.Encrypt(buf.Bytes(), key), "ECB"
 	}
