@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 
 	"github.com/vodafon/cryptopals/set2/c09_pkcs7_padding"
+	"github.com/vodafon/cryptopals/set2/c15_pkcs7_validation"
 )
 
 type CryptFunc func([]byte, []byte)
@@ -11,7 +12,11 @@ type CryptFunc func([]byte, []byte)
 func Decrypt(src, key []byte) []byte {
 	block, _ := aes.NewCipher([]byte(key))
 	data := crypt(src, key, block.BlockSize(), block.Decrypt)
-	return c09_pkcs7_padding.UnPadding(data, block.BlockSize())
+	dec, err := c15_pkcs7_validation.Validation(data)
+	if err != nil {
+		return data
+	}
+	return dec
 }
 
 func Encrypt(src, key []byte) []byte {
