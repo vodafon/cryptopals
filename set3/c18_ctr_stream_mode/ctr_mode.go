@@ -56,17 +56,17 @@ func (obj Counter) Bytes() []byte {
 func (obj CTRSystem) Decrypt(ciphertext []byte, nonce uint32) ([]byte, error) {
 	counter := obj.NewCounter(nonce)
 	start := 0
-	plaintext := make([]byte, len(ciphertext))
+	plaintext := []byte{}
 	for start < len(ciphertext) {
 		ks, err := obj.KeyStream(counter)
 		if err != nil {
 			return nil, err
 		}
 		end := start + obj.block.BlockSize()
-		if end >= len(ciphertext) {
-			end = len(ciphertext) - 1
+		if end > len(ciphertext) {
+			end = len(ciphertext)
 		}
-		xr := c2_fixed_xor.SafeXORBytes(ks, ciphertext[start:end])
+		xr := c2_fixed_xor.SafeXORBytes(ks[:len(ciphertext[start:end])], ciphertext[start:end])
 		plaintext = append(plaintext, xr...)
 		counter = counter.Inc()
 		start += obj.block.BlockSize()

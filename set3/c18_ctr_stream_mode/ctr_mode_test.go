@@ -25,7 +25,7 @@ func TestCounterInc(t *testing.T) {
 
 func TestDecrypt(t *testing.T) {
 	inp := []byte("L77na/nrFsKvynd6HzOoG7GHTLXsTVu9qvY/2syLXzhPweyyMTJULu/6/kXX0KSvoOLSFQ==")
-	exp := []byte("Yo, VIP Let's kick it Ice, Ice, baby Ice, Ice, baby")
+	exp := []byte("Yo, VIP Let's kick it Ice, Ice, baby Ice, Ice, baby ")
 	ciphertext, err := c1_hex_to_base64.DecodeBase64(inp)
 	if err != nil {
 		panic(err)
@@ -36,7 +36,7 @@ func TestDecrypt(t *testing.T) {
 	if err != nil {
 		t.Errorf("Decrypt error: %s\n", err)
 	}
-	if !bytes.Contains(res, exp) {
-		t.Errorf("Incorrect result. Expected: %q contains %q\n", res, exp)
+	if !bytes.Equal(res, exp) {
+		t.Errorf("Incorrect result. Expected: %q, got %q\n", exp, res)
 	}
 }

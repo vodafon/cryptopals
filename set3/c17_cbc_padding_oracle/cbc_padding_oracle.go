@@ -87,17 +87,15 @@ func (obj CBCSystem) isInList(plaintext []byte) bool {
 func (obj CBCSystem) exploitBlocks(block1, block2, iv []byte) ([]byte, error) {
 	c1 := make([]byte, obj.blockSize)
 	obj.rand.Read(c1)
-	i2 := append(bytes.Repeat([]byte{0}, 16))
+	i2 := make([]byte, obj.blockSize)
 	p2 := make([]byte, obj.blockSize)
 
 	for i := 1; i < obj.blockSize+1; i++ {
 		pos := obj.blockSize - i
-		if i > 1 {
-			tail := make([]byte, i)
-			for idx, _ := range tail {
-				tail[idx] = i2[pos+idx] ^ byte(i)
-				copy(c1, append(c1[:pos], tail...))
-			}
+		tail := make([]byte, i)
+		for idx, _ := range tail {
+			tail[idx] = i2[pos+idx] ^ byte(i)
+			copy(c1, append(c1[:pos], tail...))
 		}
 		b, err := obj.findByte(c1, block2, iv, pos)
 		// case if first padding is not 01.
@@ -119,29 +117,6 @@ func (obj CBCSystem) findByte(block1, block2, iv []byte, pos int) (byte, error) 
 		}
 	}
 	return byte(0), errors.New("Not found")
-}
-
-func splitBytes(text []byte, size int) ([][]byte, error) {
-	start := 0
-	end := size
-	list := [][]byte{}
-	if size < 1 || len(text)%size != 0 {
-		return list, errors.New("Invalid inputs")
-	}
-	for start < len(text) {
-		list = append(list, text[start:end])
-		start += size
-		end += size
-	}
-	return list, nil
-}
-
-func joinBytes(list [][]byte) []byte {
-	text := []byte{}
-	for _, v := range list {
-		text = append(text, v...)
-	}
-	return text
 }
 
 func (obj CBCSystem) keyGeneration() CBCSystem {
