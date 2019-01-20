@@ -73,3 +73,7 @@ func (obj CTRSystem) Decrypt(ciphertext []byte, nonce uint32) ([]byte, error) {
 	}
 	return plaintext, nil
 }
+
+func (obj CTRSystem) Encrypt(plaintext []byte, nonce uint32) ([]byte, error) {
+	return obj.Decrypt(plaintext, nonce)
+}

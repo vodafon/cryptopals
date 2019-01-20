@@ -40,3 +40,20 @@ func TestDecrypt(t *testing.T) {
 		t.Errorf("Incorrect result. Expected: %q, got %q\n", exp, res)
 	}
 }
+
+func TestEncrypt(t *testing.T) {
+	inp := []byte("some secret teXT: Yo, VIP Let's kick it Ice")
+	key := []byte("SeCrEt PaSsword1")
+	ctr := NewCTRSystem(key)
+	ciphertext, err := ctr.Encrypt(inp, 10)
+	if err != nil {
+		t.Errorf("Encrypt error: %s\n", err)
+	}
+	plaintext, err := ctr.Decrypt(ciphertext, 10)
+	if err != nil {
+		t.Errorf("Decrypt error: %s\n", err)
+	}
+	if !bytes.Equal(inp, plaintext) {
+		t.Errorf("Incorrect result. Expected: %q, got %q\n", inp, plaintext)
+	}
+}
