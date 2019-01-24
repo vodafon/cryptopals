@@ -2,6 +2,7 @@ package c3_single_byte_xor
 
 import (
 	"bytes"
+	"fmt"
 	"sort"
 
 	"github.com/vodafon/cryptopals/set1/c2_fixed_xor"
@@ -13,6 +14,10 @@ type ScoreResult struct {
 	Key    byte
 	Bytes  []byte
 	Source string
+}
+
+func (obj ScoreResult) String() string {
+	return fmt.Sprintf("Score: %.5f, Key: %x, Bytes: %q", obj.Score, obj.Key, obj.Bytes)
 }
 
 func BruteForceBySingleByte(src []byte, topLen int) []ScoreResult {

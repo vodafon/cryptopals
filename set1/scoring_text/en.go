@@ -8,7 +8,12 @@ func EnScoreCorpus(text []byte) float64 {
 	text = bytes.ToLower(text)
 	score := 0.0
 	for _, b := range text {
-		score += EnCorpus[b]
+		s, ok := EnCorpus[b]
+		if ok {
+			score += s
+		} else {
+			score -= 0.5
+		}
 	}
 	return score / float64(len(text))
 }
