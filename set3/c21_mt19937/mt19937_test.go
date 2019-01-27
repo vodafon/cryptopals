@@ -4,6 +4,17 @@ import (
 	"testing"
 )
 
+func TestMT19937(t *testing.T) {
+	mt := NewMT19937(10)
+
+	for _, exp := range expected {
+		res := mt.ExtractNumber()
+		if res != exp {
+			t.Errorf("Incorrect number. Expected %d, got %d\n", exp, res)
+		}
+	}
+}
+
 // from https://codepen.io/telinc1/pen/kkVaNB
 var expected = []uint32{
 	3312796937,
@@ -26,15 +37,4 @@ var expected = []uint32{
 	1132165610,
 	379416616,
 	645868022,
-}
-
-func TestMT19937(t *testing.T) {
-	mt := NewMT19937(10)
-
-	for _, exp := range expected {
-		res := mt.ExtractNumber()
-		if res != exp {
-			t.Errorf("Incorrect number. Expected %d, got %d\n", exp, res)
-		}
-	}
 }

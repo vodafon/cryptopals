@@ -43,16 +43,25 @@ func NewMT19937(seed uint32) *MT19937 {
 	return &obj
 }
 
+func (obj *MT19937) Update(state [nMT]uint32, idx uint32) {
+	obj.index = idx
+	obj.mt = state
+}
+
 func (obj *MT19937) ExtractNumber() uint32 {
 	if obj.index >= nMT {
 		obj.twist()
 	}
-	y := obj.mt[obj.index]
-	y ^= (y >> uMT) & dMT
-	y ^= (y << sMT) & bMT
-	y ^= (y << tMT) & cMT
-	y ^= y >> lMT
+	y := Temper(obj.mt[obj.index])
 	obj.index += 1
+	return y
+}
+
+func Temper(y uint32) uint32 {
+	y ^= y >> uMT & dMT
+	y ^= y << sMT & bMT
+	y ^= y << tMT & cMT
+	y ^= y >> lMT
 	return y
 }
 
