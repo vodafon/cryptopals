@@ -18,6 +18,18 @@ func (obj SHA1System) Verify(mac [Size]byte, message []byte) bool {
 	return mac == obj.MAC(message)
 }
 
+func (obj *SHA1) SetState(h0, h1, h2, h3, h4 uint32) {
+	obj.h[0] = h0
+	obj.h[1] = h1
+	obj.h[2] = h2
+	obj.h[3] = h3
+	obj.h[4] = h4
+}
+
+func (obj *SHA1) SetLen(l uint64) {
+	obj.len = l
+}
+
 // Source code from crypto/sha1
 
 // The size of a SHA-1 checksum in bytes.
@@ -41,21 +53,21 @@ const (
 
 // Sum returns the SHA-1 checksum of the data.
 func Sum(data []byte) [Size]byte {
-	var d digest
+	d := &SHA1{}
 	d.reset()
-	d.write(data)
-	return d.checkSum()
+	d.Write(data)
+	return d.CheckSum()
 }
 
 // digest represents the partial evaluation of a checksum.
-type digest struct {
+type SHA1 struct {
 	h   [5]uint32
 	x   [chunk]byte
 	nx  int
 	len uint64
 }
 
-func (d *digest) reset() {
+func (d *SHA1) reset() {
 	d.h[0] = init0
 	d.h[1] = init1
 	d.h[2] = init2
@@ -65,7 +77,7 @@ func (d *digest) reset() {
 	d.len = 0
 }
 
-func (d *digest) write(p []byte) (nn int, err error) {
+func (d *SHA1) Write(p []byte) (nn int, err error) {
 	nn = len(p)
 	d.len += uint64(nn)
 	if d.nx > 0 {
@@ -88,25 +100,21 @@ func (d *digest) write(p []byte) (nn int, err error) {
 	return
 }
 
-func block(dig *digest, p []byte) {
-	blockGeneric(dig, p)
-}
-
-func (d *digest) checkSum() [Size]byte {
-	len := d.len
+func (d *SHA1) CheckSum() [Size]byte {
+	l := d.len
 	// Padding.  Add a 1 bit and 0 bits until 56 bytes mod 64.
 	var tmp [64]byte
 	tmp[0] = 0x80
-	if len%64 < 56 {
-		d.write(tmp[0 : 56-len%64])
+	if l%64 < 56 {
+		d.Write(tmp[0 : 56-l%64])
 	} else {
-		d.write(tmp[0 : 64+56-len%64])
+		d.Write(tmp[0 : 64+56-l%64])
 	}
 
 	// Length in bits.
-	len <<= 3
-	putUint64(tmp[:], len)
-	d.write(tmp[0:8])
+	l <<= 3
+	putUint64(tmp[:], l)
+	d.Write(tmp[0:8])
 
 	if d.nx != 0 {
 		panic("d.nx != 0")
@@ -145,7 +153,7 @@ func putUint32(x []byte, s uint32) {
 
 // blockGeneric is a portable, pure Go version of the SHA-1 block step.
 // It's used by sha1block_generic.go and tests.
-func blockGeneric(dig *digest, p []byte) {
+func block(dig *SHA1, p []byte) {
 	var w [16]uint32
 
 	h0, h1, h2, h3, h4 := dig.h[0], dig.h[1], dig.h[2], dig.h[3], dig.h[4]
