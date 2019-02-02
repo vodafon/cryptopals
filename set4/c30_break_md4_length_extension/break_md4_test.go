@@ -8,7 +8,7 @@ import (
 
 func TestExploit(t *testing.T) {
 	inp := []byte("comment1=cooking%20MCs;userdata=foo;comment2=%20like%20a%20pound%20of%20bacon")
-	key := make([]byte, 10)
+	key := make([]byte, 10+rand.Intn(40))
 	rand.Read(key)
 	md4System := NewMD4System(key)
 	mac := md4System.MAC(inp)
