@@ -54,7 +54,7 @@ const (
 // Sum returns the SHA-1 checksum of the data.
 func Sum(data []byte) [Size]byte {
 	d := &SHA1{}
-	d.reset()
+	d.Reset()
 	d.Write(data)
 	return d.CheckSum()
 }
@@ -67,7 +67,7 @@ type SHA1 struct {
 	len uint64
 }
 
-func (d *SHA1) reset() {
+func (d *SHA1) Reset() {
 	d.h[0] = init0
 	d.h[1] = init1
 	d.h[2] = init2
