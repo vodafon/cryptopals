@@ -4,6 +4,9 @@ import "bytes"
 
 func Padding(data []byte, size int) []byte {
 	padLen := size - len(data)%size
+	if padLen == 0 {
+		padLen = size
+	}
 	padText := bytes.Repeat([]byte{byte(padLen)}, padLen)
 	return append(data, padText...)
 }
