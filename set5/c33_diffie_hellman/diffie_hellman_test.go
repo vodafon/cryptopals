@@ -1,18 +1,18 @@
 package c33_diffie_hellman
 
 import (
-	"crypto/sha256"
-	"math/big"
 	"testing"
 )
 
 func TestGenerate(t *testing.T) {
-	dh := NewDHSystem()
-	sess := dh.SessionKeySHA256()
-	sA := sha256.Sum256(new(big.Int).Exp(dh.PubKA, dh.b, dh.p).Bytes())
-	sB := sha256.Sum256(new(big.Int).Exp(dh.PubKB, dh.a, dh.p).Bytes())
+	dh1 := NewDHSystem()
+	dh2 := NewDHSystem()
 
-	if sess != sA || sess != sB {
-		t.Errorf("Incorrect result. SessionKey %x, expected A: %x, B: %x\n", sess, sA, sB)
+	if dh1.Pub == dh2.Pub {
+		t.Errorf("Public keys are equal")
+	}
+
+	if dh1.SessionKeySHA256(dh2.Pub) != dh2.SessionKeySHA256(dh1.Pub) {
+		t.Errorf("Invalid session keys\n")
 	}
 }

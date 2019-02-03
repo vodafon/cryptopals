@@ -12,35 +12,38 @@ const (
 )
 
 type DHSystem struct {
-	p     *big.Int
-	g     *big.Int
-	a     *big.Int
-	b     *big.Int
-	PubKA *big.Int
-	PubKB *big.Int
+	P    *big.Int
+	G    *big.Int
+	priv *big.Int
+	Pub  *big.Int
 }
 
-func NewDHSystem() DHSystem {
+func NewDHSystem() *DHSystem {
 	p := new(big.Int)
 	p.SetString(pStr, 16)
 	g := big.NewInt(2)
 	dh := DHSystem{
-		p: p,
-		g: g,
+		P: p,
+		G: g,
 	}
-	dh.a, dh.PubKA = generateKeys(p, g)
-	dh.b, dh.PubKB = generateKeys(p, g)
-	return dh
+	dh.priv, dh.Pub = generateKeys(p, g)
+	return &dh
 }
 
-func (obj DHSystem) SessionKey() *big.Int {
+func (obj *DHSystem) Change(p, g *big.Int) {
+	obj.P = p
+	obj.G = g
+	obj.priv, obj.Pub = generateKeys(p, g)
+}
+
+func (obj *DHSystem) SessionKey(pubB *big.Int) *big.Int {
 	s := new(big.Int)
-	s.Exp(obj.PubKB, obj.a, obj.p)
+	s.Exp(pubB, obj.priv, obj.P)
 	return s
 }
 
-func (obj DHSystem) SessionKeySHA256() [32]byte {
-	return sha256.Sum256(obj.SessionKey().Bytes())
+func (obj *DHSystem) SessionKeySHA256(pubB *big.Int) [32]byte {
+	return sha256.Sum256(obj.SessionKey(pubB).Bytes())
 }
 
 func generateKeys(p, g *big.Int) (*big.Int, *big.Int) {
