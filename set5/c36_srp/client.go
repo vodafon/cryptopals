@@ -6,10 +6,10 @@ import (
 )
 
 type Client struct {
-	email    []byte
-	password []byte
+	Email    []byte
+	Password []byte
 	salt     []byte
-	key      []byte
+	Key      []byte
 	u        *big.Int
 	priv     *big.Int
 	Pub      *big.Int
@@ -17,7 +17,10 @@ type Client struct {
 }
 
 func (obj *Client) computeK() {
-	xH := sha256.Sum256(append(obj.salt, obj.password...))
+	if len(obj.Key) != 0 {
+		return
+	}
+	xH := sha256.Sum256(append(obj.salt, obj.Password...))
 	x := new(big.Int).SetBytes(xH[:])
 	// S = (B - k*g**x)**(a + u*x) % N
 	s1 := new(big.Int).Exp(g, x, N)
@@ -25,12 +28,14 @@ func (obj *Client) computeK() {
 	s3 := new(big.Int).Add(obj.priv, new(big.Int).Mul(obj.u, x))
 	s := new(big.Int).Exp(s2, s3, N)
 	key := sha256.Sum256(s.Bytes())
-	obj.key = key[:]
+	obj.Key = key[:]
 }
 
 func (obj *Client) sendPub(s *Server) {
-	obj.Pub = new(big.Int).Exp(g, obj.priv, N)
-	s.receivePub(obj.email, obj.Pub)
+	if obj.Pub == nil {
+		obj.Pub = new(big.Int).Exp(g, obj.priv, N)
+	}
+	s.receivePub(obj.Email, obj.Pub)
 }
 
 func (obj *Client) receivePub(salt []byte, pk *big.Int) {
@@ -40,8 +45,8 @@ func (obj *Client) receivePub(salt []byte, pk *big.Int) {
 
 func initClient(email, password []byte) Client {
 	return Client{
-		email:    email,
-		password: password,
+		Email:    email,
+		Password: password,
 		priv:     privKey(),
 	}
 }

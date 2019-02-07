@@ -16,7 +16,7 @@ func TestSRP(t *testing.T) {
 	if uHC != uHS {
 		t.Errorf("Incorrect 'u' calculations. Must be equal\n")
 	}
-	if !bytes.Equal(stream.C.key, stream.S.key) {
+	if !bytes.Equal(stream.C.Key, stream.S.key) {
 		t.Errorf("Incorrect 'key' calculations. Must be equal\n")
 	}
 	if !auth {
@@ -24,7 +24,7 @@ func TestSRP(t *testing.T) {
 	}
 
 	stream = Init(email, password)
-	stream.C.password = []byte("wrongPass")
+	stream.C.Password = []byte("wrongPass")
 	auth = stream.Auth()
 	if auth {
 		t.Errorf("Authorized with invalid credentials")

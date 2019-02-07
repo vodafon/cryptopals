@@ -35,7 +35,7 @@ func (obj Stream) Auth() bool {
 	obj.computeU()
 	obj.C.computeK()
 	obj.S.computeK()
-	cHMAC := hmac256(obj.C.salt, obj.C.key)
+	cHMAC := hmac256(obj.C.salt, obj.C.Key)
 	sHMAC := hmac256(obj.S.salt, obj.S.key)
 	return bytes.Equal(cHMAC, sHMAC)
 }
