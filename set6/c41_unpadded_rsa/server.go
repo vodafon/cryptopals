@@ -26,12 +26,12 @@ func NewServer() *Server {
 	}
 }
 
-func (obj *Server) PublicKey() c39_rsa.Key {
-	return obj.rsa.Pub
+func (obj *Server) PublicKey() c39_rsa.PublicKey {
+	return obj.rsa.PublicKey()
 }
 
 func (obj *Server) Encrypt(plaintext []byte) ([]byte, error) {
-	ciphertext := c39_rsa.Encrypt(plaintext, obj.rsa.Pub)
+	ciphertext := c39_rsa.Encrypt(plaintext, obj.rsa.PublicKey())
 	sha := sha256.Sum256(ciphertext)
 	if !obj.valid(sha) {
 		return nil, AccessError

@@ -11,10 +11,10 @@ type Broadcast struct {
 	keys      []*c39_rsa.RSA
 }
 
-func (obj *Broadcast) Capture() map[c39_rsa.Key][]byte {
-	capt := make(map[c39_rsa.Key][]byte, len(obj.keys))
+func (obj *Broadcast) Capture() map[c39_rsa.PublicKey][]byte {
+	capt := make(map[c39_rsa.PublicKey][]byte, len(obj.keys))
 	for _, rsa := range obj.keys {
-		capt[rsa.Pub] = c39_rsa.Encrypt(obj.plaintext, rsa.Pub)
+		capt[rsa.PublicKey()] = c39_rsa.Encrypt(obj.plaintext, rsa.PublicKey())
 	}
 	return capt
 }
@@ -34,36 +34,36 @@ func NewBroadcast(plaintext []byte, n, bits int) *Broadcast {
 	return &br
 }
 
-func Exploit(capt map[c39_rsa.Key][]byte) *big.Int {
+func Exploit(capt map[c39_rsa.PublicKey][]byte) *big.Int {
 	NN := big.NewInt(1)
 	res := new(big.Int)
 	for k, c := range capt {
 		cn := new(big.Int).SetBytes(c)
 		msn := MSN(k, capt)
-		im := c39_rsa.InvMod(msn, k.Modulo)
+		im := c39_rsa.InvMod(msn, k.N)
 		mul := new(big.Int).Mul(cn, msn)
 		mul.Mul(mul, im)
 		res.Add(res, mul)
-		NN.Mul(NN, k.Modulo)
+		NN.Mul(NN, k.N)
 	}
 	res.Mod(res, NN)
-	cb, _ := cbrtBinary(res)
+	cb, _ := CbrtBinary(res)
 	return cb
 }
 
-func MSN(k c39_rsa.Key, capt map[c39_rsa.Key][]byte) *big.Int {
+func MSN(k c39_rsa.PublicKey, capt map[c39_rsa.PublicKey][]byte) *big.Int {
 	res := big.NewInt(1)
 	for key := range capt {
 		if key == k {
 			continue
 		}
-		res.Mul(res, key.Modulo)
+		res.Mul(res, key.N)
 	}
 	return res
 }
 
 // from https://play.golang.org/p/uoEmxRK5jgs
-func cbrtBinary(i *big.Int) (cbrt *big.Int, rem *big.Int) {
+func CbrtBinary(i *big.Int) (cbrt *big.Int, rem *big.Int) {
 	n0 := big.NewInt(0)
 	n1 := big.NewInt(1)
 	n2 := big.NewInt(2)
