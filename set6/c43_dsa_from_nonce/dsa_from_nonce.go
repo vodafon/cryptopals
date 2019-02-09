@@ -16,12 +16,8 @@ var (
 )
 
 type DSA struct {
-	P    *big.Int
-	Q    *big.Int
-	G    *big.Int
-	x    *big.Int
-	Y    *big.Int
-	MaxK *big.Int
+	P, Q, G, Y, MaxK *big.Int
+	x                *big.Int
 }
 
 func NewDSA() *DSA {
