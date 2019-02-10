@@ -38,12 +38,6 @@ func (obj *DSA) Sign(msg []byte) (*big.Int, *big.Int) {
 }
 
 func (obj *DSA) Verify(msg []byte, r, s *big.Int) bool {
-	if r.Cmp(big.NewInt(0)) == 0 || r.Cmp(obj.Q) != -1 {
-		return false
-	}
-	if s.Cmp(big.NewInt(0)) == 0 || s.Cmp(obj.Q) != -1 {
-		return false
-	}
 	w := c39_rsa.InvMod(s, obj.Q)
 	hmH := sha1.Sum(msg)
 	hm := new(big.Int).SetBytes(hmH[:])
@@ -84,9 +78,6 @@ func (obj *DSA) signK(msg []byte) (*big.Int, *big.Int, *big.Int) {
 	k, _ := rand.Int(rand.Reader, obj.MaxK)
 	r := new(big.Int).Exp(obj.G, k, obj.P)
 	r.Mod(r, obj.Q)
-	if r.Cmp(big.NewInt(0)) == 0 {
-		return obj.signK(msg)
-	}
 	hmH := sha1.Sum(msg)
 	hm := new(big.Int).SetBytes(hmH[:])
 	ki := c39_rsa.InvMod(k, obj.Q)
@@ -94,8 +85,5 @@ func (obj *DSA) signK(msg []byte) (*big.Int, *big.Int, *big.Int) {
 	s.Add(s, hm)
 	s.Mul(s, ki)
 	s.Mod(s, obj.Q)
-	if s.Cmp(big.NewInt(0)) == 0 {
-		return obj.signK(msg)
-	}
 	return r, s, k
 }
