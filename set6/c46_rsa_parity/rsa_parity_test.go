@@ -10,7 +10,7 @@ import (
 )
 
 func TestIsEven(t *testing.T) {
-	s := NewSystem(1024)
+	s := NewSystem(2048)
 	ciphertext := c39_rsa.Encrypt(big.NewInt(127832).Bytes(), s.PublicKey())
 	res := s.IsEven(ciphertext)
 	if !res {
@@ -25,7 +25,7 @@ func TestIsEven(t *testing.T) {
 }
 
 func TestExploit1(t *testing.T) {
-	s := NewSystem(1024)
+	s := NewSystem(2048)
 	inp := []byte("VGhhdCdzIHdoeSBJIGZvdW5kIHlvdSBkb24ndCBwbGF5IGFyb3VuZCB3aXRoIHRoZSBGdW5reSBDb2xkIE1lZGluYQ==")
 	exp, err := c1_hex_to_base64.DecodeBase64(inp)
 	if err != nil {

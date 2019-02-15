@@ -20,7 +20,7 @@ type PublicKey struct {
 	N *big.Int
 }
 
-func (pub *PublicKey) Size() int {
+func (pub PublicKey) Size() int {
 	return (pub.N.BitLen() + 7) / 8
 }
 
@@ -43,11 +43,11 @@ type Key struct {
 
 func Generate(bits int) (*RSA, error) {
 	priv := new(rsa.PrivateKey)
-	p, err := rand.Prime(rand.Reader, bits)
+	p, err := rand.Prime(rand.Reader, bits/2)
 	if err != nil {
 		return nil, err
 	}
-	q, err := rand.Prime(rand.Reader, bits)
+	q, err := rand.Prime(rand.Reader, bits/2)
 	if err != nil {
 		return nil, err
 	}

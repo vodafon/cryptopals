@@ -26,7 +26,7 @@ func TestSign(t *testing.T) {
 }
 
 func TestExploit(t *testing.T) {
-	ss := NewSignSystem(1024)
+	ss := NewSignSystem(2048)
 	msg := []byte("hi mom")
 	sign := Exploit(msg, 256)
 	ver := ss.Verify(msg, sign)

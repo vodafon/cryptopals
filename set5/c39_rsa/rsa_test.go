@@ -6,7 +6,7 @@ import (
 )
 
 func TestRSA(t *testing.T) {
-	rsa, err := Generate(512)
+	rsa, err := Generate(1024)
 	if err != nil {
 		t.Fatalf("Generate error: %s\n", err)
 	}
@@ -22,7 +22,7 @@ func TestRSA(t *testing.T) {
 }
 
 func TestSign(t *testing.T) {
-	rsa, err := Generate(512)
+	rsa, err := Generate(1024)
 	if err != nil {
 		t.Fatalf("Generate error: %s\n", err)
 	}

@@ -7,8 +7,8 @@ import (
 )
 
 func TestBroadcast(t *testing.T) {
-	bs := 512
-	ip, err := rand.Prime(rand.Reader, bs)
+	bs := 1024
+	ip, err := rand.Prime(rand.Reader, bs/2)
 	if err != nil {
 		t.Errorf("error: %s\n", err)
 	}
